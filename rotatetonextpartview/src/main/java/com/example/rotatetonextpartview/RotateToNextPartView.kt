@@ -7,6 +7,8 @@ import android.content.Context
 import android.graphics.Paint
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.RectF
+
 
 val colors : Array<Int> = arrayOf(
     "#f44336",
@@ -17,7 +19,7 @@ val colors : Array<Int> = arrayOf(
 ).map {
     Color.parseColor(it)
 }.toTypedArray()
-val steps : Int = 3
+val steps : Int = 4
 val parts : Int = 1 + steps
 val scGap : Float = 0.02f / parts
 val strokeFactor : Float = 90f
@@ -30,11 +32,12 @@ fun Float.divideScale(i : Int, n : Int) : Float = Math.min(n.inverse(), maxScale
 fun Float.sinify() : Float = Math.sin(this * Math.PI).toFloat()
 
 fun Canvas.drawRotateToNextPart(scale : Float, w : Float, h : Float, paint : Paint) {
-    val size : Float = w / steps
+    val size : Float = w / (steps + 1)
     val sf : Float = scale.sinify()
+    val sf1 : Float = sf.divideScale(0, parts)
     save()
     translate(0f, h / 2)
-    var x : Float = size / 2
+    var x : Float = size
     var currSf : Float = 1f
     for (j in 0..(steps - 1)) {
         val sfj : Float = sf.divideScale(j + 1, parts)
@@ -43,10 +46,20 @@ fun Canvas.drawRotateToNextPart(scale : Float, w : Float, h : Float, paint : Pai
         }
         x += size * Math.floor(sfj.toDouble()).toFloat()
     }
+    if (sf1 >= 0f && sf1 < 1f) {
+        currSf = 0f
+    }
+    val currSf1 : Float = currSf.divideScale(0, 2)
+    val currSf2 : Float = currSf.divideScale(1, 2)
     save()
     translate(x, 0f)
-    rotate(rot * currSf)
-    drawLine(-size * sf.divideScale(0, parts), 0f, 0f, 0f, paint)
+    save()
+    rotate(rot * currSf1)
+    drawLine(-(size) * sf1, 0f, 0f, 0f, paint)
+    restore()
+    if (currSf > 0f) {
+        drawArc(RectF(-size, -size, size, size), rot * (1 + currSf2), rot * (currSf1 - currSf2), true, paint)
+    }
     restore()
     restore()
 }
