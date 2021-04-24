@@ -211,4 +211,13 @@ class RotateToNextPartView(ctx : Context) : View(ctx) {
             }
         }
     }
+
+    companion object {
+
+        fun create(activity : Activity) : RotateToNextPartView {
+            val view : RotateToNextPartView = RotateToNextPartView(activity)
+            activity.setContentView(view)
+            return view
+        }
+    }
 }
