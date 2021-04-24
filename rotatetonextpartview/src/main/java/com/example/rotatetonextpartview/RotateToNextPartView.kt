@@ -186,4 +186,27 @@ class RotateToNextPartView(ctx : Context) : View(ctx) {
             curr.startUpdating(cb)
         }
     }
+
+    data class Renderer(var view : RotateToNextPartView) {
+
+        private val animator : Animator = Animator(view)
+        private val rtnp : RotateToNextPart = RotateToNextPart(0)
+        private val paint : Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+
+        fun render(canvas : Canvas) {
+            canvas.drawColor(backColor)
+            rtnp.draw(canvas, paint)
+            animator.animate {
+                rtnp.update {
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            rtnp.startUpdating {
+                animator.start()
+            }
+        }
+    }
 }
