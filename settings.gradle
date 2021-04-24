@@ -1,0 +1,3 @@
+include ':rotatetonextpartview'
+include ':app'
+rootProject.name = "LinkedRotateToNextPartView"
